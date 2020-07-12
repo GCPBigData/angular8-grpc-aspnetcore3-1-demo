@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {grpc} from "@improbable-eng/grpc-web";
-import {CountryService} from "./generated/country_pb_service";
-import {EmptyRequest, CountriesReply} from "./generated/country_pb";
+import {grpc} from '@improbable-eng/grpc-web';
+import {CountryService} from './generated/country_pb_service';
+import {EmptyRequest, CountriesReply} from './generated/country_pb';
 import { CountryModel } from './models/countryModel';
 
 @Component({
@@ -12,7 +12,7 @@ import { CountryModel } from './models/countryModel';
 export class AppComponent implements OnInit {
 
   public title = 'grpc-web-demo';
-  public countries: CountryModel[] = []; 
+  public countries: CountryModel[] = [];
 
   public ngOnInit() {
 
@@ -20,16 +20,17 @@ export class AppComponent implements OnInit {
 
     grpc.unary(CountryService.GetAll, {
       request: getCountryRequest,
-      host: "https://demogrpcweblinux.azurewebsites.net", //https://grpcwebdemo.azurewebsites.net (Windows App Service)
+      /*https://grpcwebdemo.azurewebsites.net (Windows App Service)*/
+      host: 'https://demogrpcweblinux.azurewebsites.net',
       onEnd: res => {
         const { status, statusMessage, headers, message, trailers } = res;
         if (status === grpc.Code.OK && message) {
-        var result = message.toObject() as CountriesReply.AsObject;
-        this.countries = result.countriesList.map(country => 
-          <CountryModel>({
+        const result = message.toObject() as CountriesReply.AsObject;
+        this.countries = result.countriesList.map(country =>
+          ({
             name: country.name,
             description: country.description
-          }));
+          }) as CountryModel);
         }
       }
     });
